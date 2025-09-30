@@ -1,7 +1,7 @@
 #joguinho em python
-
 from typing import List, Dict
 import random
+import time  # <- import para delay
 
 # Tuplas para dados fixos (categorias/status)
 CLASSES = ('Guerreiro', 'Mago', 'Arqueiro')
@@ -19,14 +19,11 @@ LOJA = [
 ]
 
 
-# -------
-# Classes e Herança
-# -------
+# ------- Classes e Herança -------
 class Person:
-    """Classe base para personagens (herdável)."""
     def __init__(self, nome: str, idade: int):
         self.nome = nome
-        self._idade = idade  # atributo privado/protegido
+        self._idade = idade
 
     @property
     def idade(self):
@@ -40,23 +37,21 @@ class Person:
 
 
 class Character(Person):
-    """Classe intermediária para atributos comuns de personagem."""
     def __init__(self, nome: str, idade: int, classe: str):
         super().__init__(nome, idade)
         if classe not in CLASSES:
             raise ValueError(f"Classe inválida. Opções: {CLASSES}")
         self.classe = classe
-        self.status = STATUS[0]  # padrão: 'Ativo'
+        self.status = STATUS[0]
 
 
 class Player(Character):
-    """Jogador com atributos privados, property e histórico de ações."""
     def __init__(self, nome: str, idade: int, classe: str):
         super().__init__(nome, idade, classe)
         self._level = 1
         self.experiencia = 0
         self.inventario: List[Dict] = []
-        self.registros: List[str] = []  # registros (compras, batalhas, etc.)
+        self.registros: List[str] = []
 
     @property
     def level(self):
@@ -73,16 +68,12 @@ class Player(Character):
             raise ValueError("XP inválido.")
         self.experiencia += xp
         self.registros.append(f"Ganhou {xp} XP.")
-        # sobe de nível a cada 100 XP
         while self.experiencia >= 100:
             self.experiencia -= 100
             self.level += 1
             self.registros.append("Subiu de nível!")
 
     def comprar(self, item: Dict):
-        if item in self.inventario:
-            # permitir multiplas cópias
-            pass
         self.inventario.append(item)
         self.registros.append(f"Comprou {item['nome']} por {item['preco']} moedas.")
 
@@ -92,18 +83,37 @@ class Player(Character):
 
 
 class NPC(Character):
-    """Inimigos simples (subclasse de Character)."""
     def __init__(self, nome: str, idade: int, classe: str, poder: int):
         super().__init__(nome, idade, classe)
         self.poder = poder
 
     def atacar_forca(self):
-        # retorna força de ataque baseada no poder + aleatório
         return self.poder + random.randint(0, 5)
 
 
+# Jogadores pré-cadastrados
+jogadores.extend([
+    Player("Albino", 20, "Mago"),
+    Player("Pitbull", 18, "Guerreiro"),
+    Player("Xanxerê", 20, "Arqueiro")
+])
 
-# Funções do sistema (cada ação em uma função)
+
+# ------- Funções do sistema -------
+def escolher_classe():
+    while True:
+        print("=== Escolha sua Classe ===")
+        for i, c in enumerate(CLASSES, start=1):
+            print(f"[{i}] {c}")
+        try:
+            escolha = int(input("Digite o número da classe: "))
+            if 1 <= escolha <= len(CLASSES):
+                return CLASSES[escolha - 1]  # retorna a classe correta
+            else:
+                print(f"Escolha inválida! Digite um número entre 1 e {len(CLASSES)}.")
+        except ValueError:
+            print("Entrada inválida! Digite apenas números.")
+
 
 def cadastrar_jogador():
     try:
@@ -111,27 +121,32 @@ def cadastrar_jogador():
         if not nome:
             raise ValueError("Nome não pode ser vazio.")
         idade = int(input("Idade: ").strip())
-        print("Classes disponíveis:", ', '.join(CLASSES))
-        classe = input("Escolha a classe: ").strip().title()
-        if classe not in CLASSES:
-            raise ValueError("Classe inválida.")
+        classe = escolher_classe()  # chama a função com validação
         novo = Player(nome, idade, classe)
         jogadores.append(novo)
-        print(f"Jogador '{nome}' cadastrado com sucesso!")
+        print(f"Jogador '{nome}' cadastrado com !")
+        listar_jogadores()
     except ValueError as e:
         print(f"Erro ao cadastrar: {e}")
     except Exception as e:
         print("Ocorreu um erro inesperado:", e)
-
+    
 
 def listar_jogadores():
     if not jogadores:
         print("Nenhum jogador cadastrado.")
+        time.sleep(1)
         return
     print("\n--- Lista de Jogadores ---")
     for idx, p in enumerate(jogadores, 1):
-        print(f"{idx}. {p}")
+        if isinstance(p, Player):
+            print(f"{idx}. {p}")
+        else:
+            print(f"{idx}. [ERRO] Objeto inválido na lista: {p}")
+        time.sleep(1)
     print("--------------------------")
+    time.sleep(1)
+    input("Aperte qualquer tecla pra continuar")
 
 
 def buscar_jogador_por_nome(nome: str) -> Player:
@@ -147,20 +162,27 @@ def consultar_jogador():
         p = buscar_jogador_por_nome(nome)
         print(f"\n--- Perfil de {p.nome} ---")
         print(p)
+        time.sleep(1)
         print("Inventário:")
         if p.inventario:
             for it in p.inventario:
                 print(f" - {it['nome']} (preço: {it['preco']})")
+                time.sleep(0.5)
         else:
             print(" (vazio)")
+            time.sleep(1)
         print("Registros (últimos 10):")
         for r in p.registros[-10:]:
             print("  >", r)
+            time.sleep(0.5)
         print("------------------------")
+        time.sleep(1)
     except LookupError as e:
         print(e)
+        time.sleep(1)
     except Exception as e:
         print("Erro:", e)
+        time.sleep(1)
 
 
 def editar_jogador():
@@ -181,12 +203,16 @@ def editar_jogador():
                 raise ValueError("Classe inválida.")
             p.classe = nova_classe
         print("Jogador atualizado.")
+        time.sleep(1)
     except LookupError as e:
         print(e)
+        time.sleep(1)
     except ValueError as e:
         print("Valor inválido:", e)
+        time.sleep(1)
     except Exception as e:
         print("Erro inesperado:", e)
+        time.sleep(1)
 
 
 def excluir_jogador():
@@ -195,17 +221,22 @@ def excluir_jogador():
         p = buscar_jogador_por_nome(nome)
         jogadores.remove(p)
         print(f"Jogador '{nome}' removido.")
+        time.sleep(1)
     except LookupError as e:
         print(e)
+        time.sleep(1)
     except Exception as e:
         print("Erro:", e)
+        time.sleep(1)
 
 
 def mostrar_loja():
     print("\n--- Loja ---")
     for item in LOJA:
         print(f"{item['id']}. {item['nome']} - Preço: {item['preco']}")
+        time.sleep(0.5)
     print("------------")
+    time.sleep(1)
 
 
 def comprar_item():
@@ -219,27 +250,31 @@ def comprar_item():
             raise LookupError("Item não encontrado.")
         p.comprar(item)
         print(f"{p.nome} comprou {item['nome']}.")
+        time.sleep(1)
     except LookupError as e:
         print(e)
+        time.sleep(1)
     except ValueError:
         print("Entrada inválida. Use um número para ID.")
+        time.sleep(1)
     except Exception as e:
         print("Erro:", e)
+        time.sleep(1)
 
 
 def batalhar():
-    """Simula uma batalha simples entre jogador e NPC."""
     try:
         nome = input("Nome do jogador que vai batalhar: ").strip()
         p = buscar_jogador_por_nome(nome)
-        # Criar um NPC aleatório
         npc = NPC("Goblin", random.randint(10, 40), random.choice(CLASSES), poder=random.randint(1, 8))
         print(f"{p.nome} (Level {p.level}) vs {npc.nome} (poder {npc.poder})")
-        # Calcular quem é mais forte
+        time.sleep(1)
         ataque_jogador = p.level + random.randint(0, 6)
         ataque_npc = npc.atacar_forca()
         print(f" - Força do jogador: {ataque_jogador}")
+        time.sleep(0.5)
         print(f" - Força do inimigo: {ataque_npc}")
+        time.sleep(0.5)
         if ataque_jogador >= ataque_npc:
             xp = random.randint(10, 40)
             p.ganhar_xp(xp)
@@ -248,25 +283,30 @@ def batalhar():
         else:
             p.registros.append(f"Perdeu para {npc.nome}.")
             print("Derrota... tente de novo.")
+        time.sleep(1)
     except LookupError as e:
         print(e)
+        time.sleep(1)
     except Exception as e:
         print("Erro:", e)
+        time.sleep(1)
 
 
 def mostrar_menu():
     print("""
-=== Jogo: Aventura & Loja ===
+=== Jogo de Aventura ===
 1 - Cadastrar jogador
 2 - Listar jogadores
 3 - Consultar jogador
 4 - Editar jogador
 5 - Excluir jogador
+6 - Mostrar loja
 7 - Comprar item
 8 - Batalhar
 9 - Sair
 =============================
 """)
+    time.sleep(1)
 
 
 def main():
@@ -291,16 +331,15 @@ def main():
             elif escolha == '8':
                 batalhar()
             elif escolha == '9':
-                print("Saindo... obrigado por jogar!")
+                print("Saindo do jogo...")
                 break
             else:
-                print("Opção inválida. Tente novamente.")
-        except KeyboardInterrupt:
-            print("\nInterrompido pelo usuário. Saindo.")
-            break
+                print("Opção inválida.")
+                time.sleep(1)
         except Exception as e:
             print("Erro inesperado no menu:", e)
-
+            time.sleep(1)
 
 if __name__ == "__main__":
     main()
+
