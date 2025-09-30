@@ -124,28 +124,32 @@ def cadastrar_jogador():
         classe = escolher_classe()  # chama a função com validação
         novo = Player(nome, idade, classe)
         jogadores.append(novo)
-        print(f"Jogador '{nome}' cadastrado com !")
+        print(f"Jogador '{nome}' cadastrado com sucesso!")
+        time.sleep(1.2)
         listar_jogadores()
     except ValueError as e:
         print(f"Erro ao cadastrar: {e}")
+        time.sleep(1.2)
     except Exception as e:
         print("Ocorreu um erro inesperado:", e)
-    
+        time.sleep(1.2)
+
 
 def listar_jogadores():
     if not jogadores:
         print("Nenhum jogador cadastrado.")
-        time.sleep(1)
+        time.sleep(1.2)
         return
     print("\n--- Lista de Jogadores ---")
+    time.sleep(0.8)
     for idx, p in enumerate(jogadores, 1):
         if isinstance(p, Player):
             print(f"{idx}. {p}")
         else:
             print(f"{idx}. [ERRO] Objeto inválido na lista: {p}")
-        time.sleep(1)
+        time.sleep(0.7)
     print("--------------------------")
-    time.sleep(1)
+    time.sleep(1.2)
     input("Aperte qualquer tecla pra continuar")
 
 
@@ -221,22 +225,23 @@ def excluir_jogador():
         p = buscar_jogador_por_nome(nome)
         jogadores.remove(p)
         print(f"Jogador '{nome}' removido.")
-        time.sleep(1)
+        time.sleep(1.2)
     except LookupError as e:
         print(e)
-        time.sleep(1)
+        time.sleep(1.2)
     except Exception as e:
         print("Erro:", e)
-        time.sleep(1)
+        time.sleep(1.2)
 
 
 def mostrar_loja():
     print("\n--- Loja ---")
+    time.sleep(0.8)
     for item in LOJA:
         print(f"{item['id']}. {item['nome']} - Preço: {item['preco']}")
-        time.sleep(0.5)
+        time.sleep(0.7)
     print("------------")
-    time.sleep(1)
+    time.sleep(1.2)
 
 
 def comprar_item():
@@ -250,16 +255,16 @@ def comprar_item():
             raise LookupError("Item não encontrado.")
         p.comprar(item)
         print(f"{p.nome} comprou {item['nome']}.")
-        time.sleep(1)
+        time.sleep(1.2)
     except LookupError as e:
         print(e)
-        time.sleep(1)
+        time.sleep(1.2)
     except ValueError:
         print("Entrada inválida. Use um número para ID.")
-        time.sleep(1)
+        time.sleep(1.2)
     except Exception as e:
         print("Erro:", e)
-        time.sleep(1)
+        time.sleep(1.2)
 
 
 def batalhar():
@@ -268,28 +273,29 @@ def batalhar():
         p = buscar_jogador_por_nome(nome)
         npc = NPC("Goblin", random.randint(10, 40), random.choice(CLASSES), poder=random.randint(1, 8))
         print(f"{p.nome} (Level {p.level}) vs {npc.nome} (poder {npc.poder})")
-        time.sleep(1)
+        time.sleep(1.2)
         ataque_jogador = p.level + random.randint(0, 6)
         ataque_npc = npc.atacar_forca()
         print(f" - Força do jogador: {ataque_jogador}")
-        time.sleep(0.5)
+        time.sleep(0.7)
         print(f" - Força do inimigo: {ataque_npc}")
-        time.sleep(0.5)
+        time.sleep(0.7)
         if ataque_jogador >= ataque_npc:
             xp = random.randint(10, 40)
             p.ganhar_xp(xp)
             p.registros.append(f"Venceu batalha contra {npc.nome} (+{xp} XP).")
             print(f"Vitória! {p.nome} ganhou {xp} XP.")
+            time.sleep(1.2)
         else:
             p.registros.append(f"Perdeu para {npc.nome}.")
             print("Derrota... tente de novo.")
-        time.sleep(1)
+            time.sleep(1.2)
     except LookupError as e:
         print(e)
-        time.sleep(1)
+        time.sleep(1.2)
     except Exception as e:
         print("Erro:", e)
-        time.sleep(1)
+        time.sleep(1.2)
 
 
 def mostrar_menu():
