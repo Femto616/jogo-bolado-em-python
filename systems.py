@@ -1,7 +1,7 @@
 # systems.py
 from typing import List, Dict
 import random
-import time
+import time #Import utilizado para ter um delay em cada etapa
 
 # Tuplas para dados fixos
 CLASSES = ('Guerreiro', 'Mago', 'Arqueiro')
@@ -19,6 +19,8 @@ LOJA = [
 ]
 
 # ------- Classes -------
+
+
 class Person:
     def __init__(self, nome: str, idade: int):
         self.nome = nome
@@ -87,6 +89,13 @@ class NPC(Character):
         return self.poder + random.randint(0, 5)
 
 
+jogadores.extend([
+    Player("Albino", 20, "Mago"),
+    Player("Pitbull", 18, "Guerreiro"),
+    Player("Xanxerê", 20, "Arqueiro")
+])
+
+
 # ------- Funções -------
 def escolher_classe():
     while True:
@@ -137,7 +146,7 @@ def listar_jogadores():
         time.sleep(0.7)
     print("--------------------------")
     time.sleep(1.2)
-    input("Aperte qualquer tecla pra continuar")
+    input('Aperte ENTER para continuar:    ')
 
 
 def buscar_jogador_por_nome(nome: str) -> Player:
