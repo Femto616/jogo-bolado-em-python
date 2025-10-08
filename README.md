@@ -1,4 +1,4 @@
-# RPG Python - Joguinho de Aventuras
+# RPG Python - xanxerê game
 
 ## Descrição
 
