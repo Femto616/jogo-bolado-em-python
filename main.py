@@ -6,7 +6,7 @@ import time
 
 def mostrar_menu():
     print("""
-=== Jogo de Aventura ===
+=== xanxer game ===
 1 - Cadastrar jogador
 2 - Listar jogadores
 3 - Consultar jogador

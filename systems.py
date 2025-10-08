@@ -20,7 +20,6 @@ LOJA = [
 
 # ------- Classes -------
 
-
 class Person:
     def __init__(self, nome: str, idade: int):
         self.nome = nome
@@ -35,7 +34,6 @@ class Person:
         if not isinstance(valor, int) or valor < 0:
             raise ValueError("Idade deve ser inteiro >= 0.")
         self._idade = valor
-
 
 class Character(Person):
     def __init__(self, nome: str, idade: int, classe: str):
@@ -116,7 +114,7 @@ def cadastrar_jogador():
         nome = input("Nome do jogador: ").strip()
         if not nome:
             raise ValueError("Nome não pode ser vazio.")
-        idade = int(input("Idade: ").strip())
+        idade = int(input("Idade: ").strip())()
         classe = escolher_classe()  # chama a função com validação
         novo = Player(nome, idade, classe)
         jogadores.append(novo)
