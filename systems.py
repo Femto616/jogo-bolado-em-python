@@ -31,7 +31,7 @@ class Person: #classe base
 
     @idade.setter
     def idade(self, valor):
-        if not isinstance(valor, int) or valor < 0: #impede deixar numero quebrado ou negativo
+        if not isinstance(valor, int) or valor < 0:#impede deixar numero quebrado ou negativo
             raise ValueError("Idade deve ser inteiro >= 0.")
         self._idade = valor
 
@@ -114,7 +114,7 @@ def cadastrar_jogador(): #pede um nome e idade, dps chama escolher_classe para p
         nome = input("Nome do jogador: ").strip()
         if not nome:
             raise ValueError("Nome não pode ser vazio.")
-        idade = int(input("Idade: ").strip())()
+        idade = int(input("Idade: ").strip())
         classe = escolher_classe()  # chama a função com validação
         novo = Player(nome, idade, classe)
         jogadores.append(novo)
