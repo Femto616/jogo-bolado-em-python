@@ -20,39 +20,39 @@ LOJA = [
 
 # ------- Classes -------
 
-class Person:
+class Person: #classe base
     def __init__(self, nome: str, idade: int):
         self.nome = nome
         self._idade = idade
 
-    @property
+    @property #faz eu poder usar ele como um atributo simples
     def idade(self):
         return self._idade
 
     @idade.setter
     def idade(self, valor):
-        if not isinstance(valor, int) or valor < 0:
+        if not isinstance(valor, int) or valor < 0: #impede deixar numero quebrado ou negativo
             raise ValueError("Idade deve ser inteiro >= 0.")
         self._idade = valor
 
-class Character(Person):
+class Character(Person): #herda a classe person
     def __init__(self, nome: str, idade: int, classe: str):
-        super().__init__(nome, idade)
-        if classe not in CLASSES:
+        super().__init__(nome, idade) #para reusar a logica do person
+        if classe not in CLASSES: #ele vê se a classe está no CLASSES e se n estiver dá erro
             raise ValueError(f"Classe inválida. Opções: {CLASSES}")
         self.classe = classe
         self.status = STATUS[0]
 
 
-class Player(Character):
-    def __init__(self, nome: str, idade: int, classe: str):
+class Player(Character): # herda de Character e repesenta um personagem jogavel
+    def __init__(self, nome: str, idade: int, classe: str): #reusa a logica do Character
         super().__init__(nome, idade, classe)
-        self._level = 1
+        self._level = 1                           # novos atributos para o jogador
         self.experiencia = 0
         self.inventario: List[Dict] = []
         self.registros: List[str] = []
 
-    @property
+    @property #similar a idade garante que o level seja sempre inteiro
     def level(self):
         return self._level
 
@@ -62,32 +62,32 @@ class Player(Character):
             raise ValueError("Level deve ser inteiro >= 1.")
         self._level = novo
 
-    def ganhar_xp(self, xp: int):
+    def ganhar_xp(self, xp: int): #usamos um loop para fazer a logica de upar de nivel assim a cada 100 de xp aument um level automaticamente chamando o setter de level
         self.experiencia += xp
         self.registros.append(f"Ganhou {xp} XP.")
         while self.experiencia >= 100:
             self.experiencia -= 100
             self.level += 1
-            self.registros.append("Subiu de nível!")
+            self.registros.append("Subiu de nível!") #registra a ação
 
-    def comprar(self, item: Dict):
+    def comprar(self, item: Dict): #adiciona o item no inventario do jogador e registra a compra
         self.inventario.append(item)
         self.registros.append(f"Comprou {item['nome']} por {item['preco']} moedas.")
 
-    def __str__(self):
+    def __str__(self): #define como objeto o player para exibir um resumo das estatisticas principais quando impresso
         return f"{self.nome} | Classe: {self.classe} | Level: {self.level} | XP: {self.experiencia} | Itens: {len(self.inventario)}"
 
 
-class NPC(Character):
-    def __init__(self, nome: str, idade: int, classe: str, poder: int):
+class NPC(Character):#herda Character dnv para fazer os inimigos/NPC (personagem n jogavel)
+    def __init__(self, nome: str, idade: int, classe: str, poder: int):#adiciona o atributo poder
         super().__init__(nome, idade, classe)
         self.poder = poder
 
-    def atacar_forca(self):
+    def atacar_forca(self): #calcula a força do NPC e adiciona um valor aleatorio ao seu poder
         return self.poder + random.randint(0, 5)
 
 
-jogadores.extend([
+jogadores.extend([ #jogadores pre estabelecidos 
     Player("Albino", 20, "Mago"),
     Player("Pitbull", 18, "Guerreiro"),
     Player("Xanxerê", 20, "Arqueiro")
@@ -95,7 +95,7 @@ jogadores.extend([
 
 
 # ------- Funções -------
-def escolher_classe():
+def escolher_classe(): #exibe as classes disponiveis no Classes e usa um loop while para foçar a usar um numero valido
     while True:
         print("=== Escolha sua Classe ===")
         for i, c in enumerate(CLASSES, start=1):
@@ -109,7 +109,7 @@ def escolher_classe():
         except ValueError:
             print("Entrada inválida! Digite apenas números.")
 
-def cadastrar_jogador():
+def cadastrar_jogador(): #pede um nome e idade, dps chama escolher_classe para pegar a classe, cria um novo objeto player e coloca na lista jogadores
     try:
         nome = input("Nome do jogador: ").strip()
         if not nome:
@@ -129,7 +129,7 @@ def cadastrar_jogador():
         time.sleep(1.2)
 
 
-def listar_jogadores():
+def listar_jogadores(): #passa pela lista jogadores e imprime o resumo de cada um usando o __str__ da classe player
     if not jogadores:
         print("Nenhum jogador cadastrado.")
         time.sleep(1.2)
@@ -147,14 +147,14 @@ def listar_jogadores():
     input('Aperte ENTER para continuar:    ')
 
 
-def buscar_jogador_por_nome(nome: str) -> Player:
+def buscar_jogador_por_nome(nome: str) -> Player: #procura um jogador na lista jogadores pelo nome ignorando maiuscula ou minuscula e dando erro se n encontrar
     for p in jogadores:
         if p.nome.lower() == nome.lower():
             return p
     raise LookupError("Jogador não encontrado.")
 
 
-def consultar_jogador():
+def consultar_jogador(): #pede um nome, busca o jogador e imprime seu perfil,inventario e registros de açoes
     try:
         nome = input("Nome do jogador para consultar: ").strip()
         p = buscar_jogador_por_nome(nome)
@@ -183,7 +183,7 @@ def consultar_jogador():
         time.sleep(1)
 
 
-def editar_jogador():
+def editar_jogador(): #permite um jogador mudar o nome,idade e classe usando o setter com a validaçao do Person 
     try:
         nome = input("Nome do jogador para editar: ").strip()
         p = buscar_jogador_por_nome(nome)
@@ -213,7 +213,7 @@ def editar_jogador():
         time.sleep(1)
 
 
-def excluir_jogador():
+def excluir_jogador(): #remove o jogador 
     try:
         nome = input("Nome do jogador para excluir: ").strip()
         p = buscar_jogador_por_nome(nome)
@@ -228,7 +228,7 @@ def excluir_jogador():
         time.sleep(1.2)
 
 
-def mostrar_loja():
+def mostrar_loja(): #mostra a loja pegando o id,nome e preço na lista no começo do codigo
     print("\n--- Loja ---")
     time.sleep(0.8)
     for item in LOJA:
@@ -238,7 +238,7 @@ def mostrar_loja():
     time.sleep(1.2)
 
 
-def comprar_item():
+def comprar_item(): #permite que o jogador compre itens mas sem verificar o dinheiro no fim de simplificar as coisas
     try:
         nome = input("Nome do jogador que vai comprar: ").strip()
         p = buscar_jogador_por_nome(nome)
@@ -263,25 +263,25 @@ def comprar_item():
 
 def batalhar():
     try:
-        nome = input("Nome do jogador que vai batalhar: ").strip()
+        nome = input("Nome do jogador que vai batalhar: ").strip() #busca o jogador
         p = buscar_jogador_por_nome(nome)
         npc = NPC("Goblin", random.randint(10, 40), random.choice(CLASSES), poder=random.randint(1, 8))
         print(f"{p.nome} (Level {p.level}) vs {npc.nome} (poder {npc.poder})")
         time.sleep(1.2)
         ataque_jogador = p.level + random.randint(0, 6)
         ataque_npc = npc.atacar_forca()
-        print(f" - Força do jogador: {ataque_jogador}")
+        print(f" - Força do jogador: {ataque_jogador}") #compara força do jogador com a do npc sendo a do jogador com base no level e do npc com valor aleatorio
         time.sleep(0.7)
         print(f" - Força do inimigo: {ataque_npc}")
         time.sleep(0.7)
-        if ataque_jogador >= ataque_npc:
+        if ataque_jogador >= ataque_npc: #se o jogador ganhar chama o p.ganhar_xp() dando xp para o level up sendo de 10 a 40 de xp
             xp = random.randint(10, 40)
             p.ganhar_xp(xp)
-            p.registros.append(f"Venceu batalha contra {npc.nome} (+{xp} XP).")
+            p.registros.append(f"Venceu batalha contra {npc.nome} (+{xp} XP).") #registra o resultado
             print(f"Vitória! {p.nome} ganhou {xp} XP.")
             time.sleep(1.2)
         else:
-            p.registros.append(f"Perdeu para {npc.nome}.")
+            p.registros.append(f"Perdeu para {npc.nome}.") #registra a derrota do jogador
             print("Derrota... tente de novo.")
             time.sleep(1.2)
     except LookupError as e:
